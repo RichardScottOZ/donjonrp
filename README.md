@@ -2,100 +2,146 @@ Originally from http://donjon.bin.sh/code/ , ©2009-2015 "drow"
 
 Four separate tools: A name generator, a random generator, a fractal world generator and a random dungeon generator.
 
-#Name Generator
-##How it Works
+## How it Works (Python)
 
 This name generator constructs and uses [Markov chains](http://en.wikipedia.org/wiki/Markov_chain). Given a list of sample names, it analyzes each name to construct frequency tables for name length and letter pairs. It then uses these tables to construct a new name in the style of the sample set.
 
-##Source Code
+## Source Code
 
-The following source code provides a JavaScript random name generator, and some example data. The name generator is released to the public domain. The example data is drawn from Kate Monk's Onomastikon, © 1997 Kate Monk.
+Python implementation available:
+
+* [name_generator.py](namegenerator/name_generator.py)
+* [egyptian_set.py](namegenerator/egyptian_set.py)
+
+## Using the Generator (Python)
+
+```python
+import sys
+sys.path.insert(0, 'namegenerator')
+
+import name_generator
+import egyptian_set
+
+# Load the data
+egyptian_set.load_egyptian_set()
+
+# Generate a single name
+name = name_generator.generate_name('egyptian')
+print(name)  # e.g., "Amenhotpe"
+
+# Generate multiple names
+names = name_generator.name_list('egyptian', 10)
+for name in names:
+    print(name)
+```
+
+## Legacy JavaScript Version
+
+The original JavaScript version is still available in the same directory:
 
 * [name_generator.js](namegenerator/name_generator.js)
 * [egyptian_set.js](namegenerator/egyption_set.js)
-
-##Using the Generator
-
-First, you'll need to create a JavaScript data file. This file defines an array list of sample names as a named element of the name_set object (which is declared in name_generator.js).
-
-Then, include both the name_generator.js file and your data file in your HTML page. A clever person might note that you could easily create and include more than one data file here.
-
-```html
-<script type="text/javascript" src="name_generator.js"></script>
-<script type="text/javascript" src="egyptian_set.js"></script>
-```
-
-The generate_name() function accepts a single argument, the name of your name set, and returns a text string. You can simply write this text string to the HTML page...
-
-```html
-<script type="text/javascript">
-  document.write(generate_name('egyptian'));
-</script>
-```
-
-> Nerkho
-
-Or assign it to a variable in your own JavaScript code. You may also be interested in the name_list() function, which accepts the name of a name set and a number, and returns an array of generated names.
-##tl;dr
-
 * [name.html](namegenerator/name.html)
 
-#Random Generator
+# Random Generator
 
-##Source Code
+## Source Code
 
-The following source code provides a simple yet flexible JavaScript random text generator, and some example data. Both are released to the public domain.
+Python implementation available:
+
+* [generator.py](randomgenerator/generator.py)
+* [warrior_data.py](randomgenerator/warrior_data.py)
+
+## Using the Generator (Python)
+
+```python
+import sys
+sys.path.insert(0, 'randomgenerator')
+
+import generator
+import warrior_data
+
+# Load the data
+warrior_data.load_warrior_data()
+
+# Generate a single warrior description
+warrior = generator.generate_text('warrior')
+print(warrior)  
+# e.g., "A female human warrior, wearing plate armor and wielding a longbow and arrows."
+
+# Generate multiple descriptions
+warriors = generator.generate_list('warrior', 5)
+for warrior in warriors:
+    print(warrior)
+```
+
+## Legacy JavaScript Version
+
+The original JavaScript version is still available:
 
 * [generator.js](randomgenerator/generator.js)
 * [warrior_data.js](randomgenerator/warrior_data.js)
-
-##Using the Generator
-
-First, you'll need to create a JavaScript data file. This file defines tables as named elements of the gen_data object (which is declared in generator.js). Typically, the first or main table in the file contains text patterns, which may include phrases or words from other tables indicated by {name}. Note that table names can only contain the letters a-z, digits 0-9, and the underscore. A table may be defined as a simple array list, or as a indexed object (see the warrior_data.js file for examples of both).
-
-Then, include both the generator.js file and your data file in your HTML page. A clever person might note that you could easily create and include more than one data file here.
-
-```html
-<script type="text/javascript" src="generator.js"></script>
-<script type="text/javascript" src="warrior_data.js"></script>
-```
-The generate_text() function accepts a single argument, the name of your main table, and returns a text string. You can simply write this text string to the HTML page...
-
-```html
-<script type="text/javascript">
-  document.write(generate_text('warrior'));
-</script>
-```
-
-A female human warrior, wearing plate armor and wielding a longbow and arrows.
-
-Or assign it to a variable in your own JavaScript code. You may also be interested in the generate_list() function, which accepts the name of a table and a number, and returns an array of generated text strings.
-##tl;dr
-
 * [random.html](randomgenerator/random.html)
 
-#Fractal World Generator
-##A Brief History
+# Fractal World Generator
 
-The fractal world generator is based on code by [John Olsson](http://www.lysator.liu.se/~johol/fwmg/fwmg.html). The donjon version was completely rewritten in Nov 2009, and includes changes to the faulting algorithm and support for alternate color palettes. It also supports additional map projections; icosahedral was added in Sept 2010, and sinusoidal, Mollweide, and transverse Mercator in Aug 2011.
-##How it Works
+## A Brief History
+
+The fractal world generator is based on code by [John Olsson](http://www.lysator.liu.se/~johol/fwmg/fwmg.html). The donjon version was completely rewritten in Nov 2009, and includes changes to the faulting algorithm and support for alternate color palettes.
+
+## How it Works
 
 A sphere is bisected along a random great circle, and one half elevated above the other. Repeating this process thousands of times produces a faulted terrain. Next, the elevation values are sorted into a histogram to determine sea level. Finally, the elevation map is scaled into a color map, and transformed into the desired projection.
-##Source Code
 
-The original code has a few minor errors which can cause a segmentation fault and crash. Version 2.2a fixes these problems. Both versions are provided under the [GNU General Public License, version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt). (See git repository history for older versions)
+## Source Code
+
+Python implementation available:
+
+* [worldgen.py](worldgen/worldgen.py)
+
+## Using the Generator (Python)
+
+```python
+from worldgen.worldgen import WorldGenerator
+
+# Generate a world
+world = WorldGenerator(
+    width=320,
+    height=160,
+    seed=42,
+    num_faults=1000,
+    percent_water=50,
+    percent_ice=10
+)
+
+world.generate()
+filename = world.save_image('my_world.gif')
+print(f"World saved to {filename}")
+```
+
+Or run interactively:
+
+```bash
+python3 worldgen/worldgen.py
+```
+
+## Legacy C Version
+
+The original C code is still available:
 
  * [worldgen.c](worldgen/worldgen.c)
 
-##The World of Tumult
+## The World of Tumult
 
 ![The World of Tumult](worldgen/tumult.gif)
 
-#Random Dungeon Generator
-##A Brief History
+# Random Dungeon Generator
+
+## A Brief History
 
 Drow began work on his dungeon generator sometime around 1999. It was originally hosted on the demonweb (his personal home page), moved to the Dire Press website in May 2006, and then to the donjon website in Sept 2009. Early versions included basic dungeon layout and size options, and generated maps as HTML tables of black and white cells. Code to generate images for dungeon maps was added in March 2009, and for cavernous dungeons in Sept 2010.
-##How it Works
+
+## How it Works
 
 A dungeon is constructed as a two-dimensional matrix of integers, each representing one cell. Within an integer, each bit indicates a different state, such as 0x01 for blocked cells, 0x02 for cells in rooms, and 0x04 for cells in corridors. Rooms and corridors always fall along odd-numbered columns and rows, and rooms are always odd numbers in width and height.
 
@@ -103,14 +149,49 @@ Rooms are placed randomly or by algorithm. If a room does not collide with a blo
 
 The corridor generator is a simple recursive algorithm with a few quirks. Labyrinth corridors are generated by shuffling the list of directions randomly, errant corridors continue in the current direction 50% of the time, and straight corridors continue 90% of the time.
 
-Caverns are generated using cellular automata, inspired by [Jim Babcock's article at RogueBasin](http://roguebasin.roguelikedevelopment.org/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels). If the algorithm results in multiple cavern systems, a simple search finds the shortest cuts required to join them. The cavern is refined from cell to display resolution by iteratively dividing each cell into smaller cells and re-running the cellular automata algoritm.
-##Source Code
+## Source Code
 
-The following source code is a simplified implementation of the donjon random dungeon generator. It is provided under the [Creative Commons Attribution-NonCommercial 3.0 Unported License](http://creativecommons.org/licenses/by-nc/3.0/).
+Python implementation available:
+
+* [dungeon.py](dungeon/dungeon.py)
+
+## Using the Generator (Python)
+
+```python
+from dungeon.dungeon import DungeonGenerator
+
+# Generate a dungeon
+dungeon = DungeonGenerator(
+    seed=12345,
+    n_rows=39,
+    n_cols=39,
+    room_layout='Scattered',
+    corridor_layout='Bent',
+    remove_deadends=50,
+    add_stairs=2,
+    cell_size=18
+)
+
+dungeon.generate()
+filename = dungeon.save_image('my_dungeon.gif')
+print(f"Dungeon saved to {filename}")
+print(f"Rooms: {dungeon.n_rooms}")
+print(f"Doors: {len(dungeon.doors)}")
+```
+
+Or run with default settings:
+
+```bash
+python3 dungeon/dungeon.py
+```
+
+## Legacy Perl Version
+
+The original Perl code is still available:
 
 * [dungeon.pl](dungeon/dungeon.pl)
 
-##The Dungeon of Random Death
+## The Dungeon of Random Death
 
 ![The Dungeon of Random Death](dungeon/1406255859.gif)
 
