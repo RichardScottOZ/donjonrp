@@ -1,0 +1,2 @@
+# Python dependencies for donjonrp
+Pillow>=10.0.0
