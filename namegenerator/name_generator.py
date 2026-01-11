@@ -13,6 +13,9 @@ import math
 name_set = {}
 chain_cache = {}
 
+# Markov chain weighting exponent
+CHAIN_WEIGHT_EXPONENT = 1.3
+
 
 def generate_name(name_type):
     """Generate a name using a Markov chain."""
@@ -88,7 +91,7 @@ def scale_chain(chain):
         
         for token in chain[key]:
             count = chain[key][token]
-            weighted = int(math.pow(count, 1.3))
+            weighted = int(math.pow(count, CHAIN_WEIGHT_EXPONENT))
             
             chain[key][token] = weighted
             table_len[key] += weighted
